@@ -1,14 +1,14 @@
 using ItHelpDesk.Api.Auth;
 using ItHelpDesk.Api.Data;
 using ItHelpDesk.Api.Data.Entities;
+using ItHelpDesk.Api.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 
@@ -23,6 +23,8 @@ builder.Services.AddIdentity<ItHelpDeskUser, IdentityRole>()
 builder.Services.AddTransient<AuthSeeder>();
 builder.Services.AddTransient<JwtTokenService>();
 builder.Services.AddScoped<SessionService>();
+builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -42,10 +44,28 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(o =>
+{
+    o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header
+    });
+    o.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -55,7 +75,6 @@ using (var scope = app.Services.CreateScope())
     await scope.ServiceProvider.GetRequiredService<AuthSeeder>().SeedAsync();
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
