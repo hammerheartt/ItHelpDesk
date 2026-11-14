@@ -45,7 +45,7 @@ namespace ItHelpDesk.Api.Auth
             {
                 UserName = userName,
                 Email = _configuration["Admin:Email"],
-                FullName = _configuration["Admin:FullName"] ?? "Administrator"
+                FullName = _configuration["Admin:FullName"]!
             };
             var result = await _userManager.CreateAsync(admin, password);
             if (!result.Succeeded)
