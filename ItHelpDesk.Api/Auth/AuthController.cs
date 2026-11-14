@@ -22,31 +22,6 @@ namespace ItHelpDesk.Api.Auth
             _sessionService = sessionService;
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<RegisterResponseDto>> Register(RegisterRequestDto dto)
-        {
-            if (await _userManager.FindByNameAsync(dto.UserName) != null)
-            {
-                return Problem(detail: "Username is already taken.", statusCode: 409);
-            }
-
-            var user = new ItHelpDeskUser { UserName = dto.UserName, Email = dto.Email, FullName = dto.FullName };
-            var result = await _userManager.CreateAsync(user, dto.Password);
-
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(error.Code, error.Description);
-                }
-                return ValidationProblem(ModelState);
-            }
-
-            await _userManager.AddToRoleAsync(user, ItHelpDeskRoles.Employee);
-
-            return StatusCode(201, new RegisterResponseDto(user.Id, user.UserName!, user.FullName, user.Email!));
-        }
-
         [HttpPost("login")]
         public async Task<ActionResult<AccessTokenResponseDto>> Login(LoginRequestDto dto)
         {
