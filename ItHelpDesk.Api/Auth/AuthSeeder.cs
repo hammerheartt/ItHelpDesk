@@ -36,16 +36,16 @@ namespace ItHelpDesk.Api.Auth
 
         private async Task AddAdmin()
         {
-            var userName = _configuration["Admin:UserName"];
+            var email = _configuration["Admin:Email"];
             var password = _configuration["Admin:Password"];
-            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password)) return;
-            if (await _userManager.FindByNameAsync(userName) != null) return;
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return;
+            if (await _userManager.FindByEmailAsync(email) != null) return;
 
             var admin = new ItHelpDeskUser
             {
-                UserName = userName,
-                Email = _configuration["Admin:Email"],
-                FullName = _configuration["Admin:FullName"]!
+                UserName = email,
+                Email = email,
+                FullName = _configuration["Admin:FullName"] ?? "Administrator"
             };
             var result = await _userManager.CreateAsync(admin, password);
             if (!result.Succeeded)

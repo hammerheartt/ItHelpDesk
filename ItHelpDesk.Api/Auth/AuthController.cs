@@ -25,10 +25,10 @@ namespace ItHelpDesk.Api.Auth
         [HttpPost("login")]
         public async Task<ActionResult<AccessTokenResponseDto>> Login(LoginRequestDto dto)
         {
-            var user = await _userManager.FindByNameAsync(dto.UserName);
+            var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
             {
-                return Problem(detail: "Wrong username or password.", statusCode: 401);
+                return Problem(detail: "Wrong email or password.", statusCode: 401);
             }
 
             if (!user.IsActive)

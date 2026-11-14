@@ -16,7 +16,10 @@ var connectionString = builder.Configuration.GetConnectionString("ItHelpDesk");
 builder.Services.AddDbContext<ItHelpDeskDbContext>(o =>
     o.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 4, 0))));
 
-builder.Services.AddIdentity<ItHelpDeskUser, IdentityRole>()
+builder.Services.AddIdentity<ItHelpDeskUser, IdentityRole>(o =>
+{
+    o.User.RequireUniqueEmail = true;
+})
     .AddEntityFrameworkStores<ItHelpDeskDbContext>()
     .AddDefaultTokenProviders();
 
@@ -25,6 +28,7 @@ builder.Services.AddTransient<JwtTokenService>();
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddScoped<ITicketsRepository, TicketsRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
