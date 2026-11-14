@@ -1,6 +1,6 @@
 ﻿namespace ItHelpDesk.Api.Data
 {
-    public class HelpdeskDbContext
+    public class ItHelpDeskProfile
     {
     }
 }

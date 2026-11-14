@@ -1,6 +1,10 @@
 ﻿namespace ItHelpDesk.Api.Data.Entities
 {
-    public class TicketPriority
+    public enum TicketPriority
     {
+        Low,
+        Medium,
+        High,
+        Critical
     }
 }
