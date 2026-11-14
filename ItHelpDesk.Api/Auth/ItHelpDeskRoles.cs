@@ -1,6 +1,6 @@
 ﻿namespace ItHelpDesk.Api.Auth
 {
-    public static class HelpdeskRoles
+    public static class ItHelpDeskRoles
     {
         public const string Employee = "Employee";
         public const string Technician = "Technician";
