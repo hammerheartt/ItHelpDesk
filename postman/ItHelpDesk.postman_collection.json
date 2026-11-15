@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6766412c-d1c6-4aaa-8262-f2cb2c8e7010",
+		"_postman_id": "3ea48030-0533-4e5e-84f7-f684398a213d",
 		"name": "ItHelpDesk",
 		"description": "API tests for ItHelpDesk. Run the whole collection in order with the Collection Runner. Works on a fresh database and on re-runs. Requires the 'ItHelpDesk Local' environment.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -7992,6 +7992,185 @@
 									"type": "string"
 								}
 							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stats",
+			"item": [
+				{
+					"name": "Admin Get Stats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));\nconst s = pm.response.json();\nconst st = s.ticketsByStatus;\npm.test(\"All 7 statuses listed\", () =>\n    pm.expect(Object.keys(st)).to.have.members([\"New\", \"Assigned\", \"InProgress\", \"Resolved\", \"Closed\", \"Reopened\", \"Cancelled\"]));\npm.test(\"Total equals sum of statuses\", () =>\n    pm.expect(s.totalTickets).to.eql(Object.values(st).reduce((a, b) => a + b, 0)));\npm.test(\"Unassigned equals New\", () => pm.expect(s.unassignedTickets).to.eql(st.New));\npm.test(\"Open = Assigned + InProgress + Reopened\", () =>\n    pm.expect(s.openTickets).to.eql(st.Assigned + st.InProgress + st.Reopened));\npm.test(\"Overdue is not more than open\", () => pm.expect(s.overdueTickets).to.be.within(0, s.openTickets));\npm.test(\"At least one reopened ticket (workflow test)\", () => pm.expect(s.reopenedTickets).to.be.at.least(1));\npm.test(\"Average resolution time is a positive number\", () => {\n    pm.expect(s.averageResolutionHours).to.be.a(\"number\");\n    pm.expect(s.averageResolutionHours).to.be.at.least(0);\n});\npm.test(\"Categories sorted by count, descending\", () => {\n    const c = s.ticketsByCategory.map(x => x.count);\n    pm.expect(c).to.eql([...c].sort((a, b) => b - a));\n});\npm.test(\"Category counts add up to total\", () =>\n    pm.expect(s.ticketsByCategory.reduce((a, x) => a + x.count, 0)).to.eql(s.totalTickets));\nconst techs = s.technicians;\nconst byName = n => techs.find(t => t.fullName === n);\npm.test(\"Technicians sorted by name\", () => {\n    const n = techs.map(t => t.fullName);\n    pm.expect(n).to.eql([...n].sort((a, b) => a.localeCompare(b)));\n});\npm.test(\"Only technicians listed (no admin/employees)\", () =>\n    techs.forEach(t => pm.expect([\"Jonas Jonaitis\", \"Ona Onaitė\", \"System Administrator\"]).to.not.include(t.fullName)));\npm.test(\"Petras has resolved tickets\", () => pm.expect(byName(\"Petras Petraitis\").resolvedTickets).to.be.at.least(1));\npm.test(\"Laura has an open ticket\", () => pm.expect(byName(\"Laura Lauraitė\").openTickets).to.be.at.least(1));\npm.test(\"Technician with no tickets is still listed, as inactive\", () => {\n    const r = byName(\"Retired Tech\");\n    pm.expect(r).to.exist;\n    pm.expect(r.isActive).to.be.false;\n    pm.expect(r.openTickets).to.eql(0);\n});\npm.environment.set(\"statsTotal\", s.totalTickets);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stats Total Matches Ticket List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));\nconst meta = JSON.parse(pm.response.headers.get(\"Pagination\") || \"{}\");\npm.test(\"Same total as the stats endpoint\", () => pm.expect(meta.totalCount).to.eql(Number(pm.environment.get(\"statsTotal\"))));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tickets?pageSize=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tickets"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Employee Get Stats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is 403\", () => pm.response.to.have.status(403));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stats"
+							]
+						},
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jonasToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Technician Get Stats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is 403\", () => pm.response.to.have.status(403));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stats"
+							]
+						},
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{petrasToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Guest Get Stats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is 401\", () => pm.response.to.have.status(401));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stats"
+							]
+						},
+						"auth": {
+							"type": "noauth"
 						}
 					},
 					"response": []
