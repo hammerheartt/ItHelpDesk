@@ -110,7 +110,7 @@ namespace ItHelpDesk.Api.Controllers
             {
                 var open = await _ticketsRepository.CountOpenAssigned(user.Id);
                 if (open > 0)
-                    return Problem(detail: $"Reassign {open} open ticket(s) first.", statusCode: 409);
+                    return Problem(detail: $"Reassign or close {open} ticket(s) first.", statusCode: 409);
             }
 
             await _userManager.RemoveFromRolesAsync(user, currentRoles);
@@ -136,7 +136,7 @@ namespace ItHelpDesk.Api.Controllers
             {
                 var open = await _ticketsRepository.CountOpenAssigned(user.Id);
                 if (open > 0)
-                    return Problem(detail: $"Reassign {open} open ticket(s) first.", statusCode: 409);
+                    return Problem(detail: $"Reassign or close {open} ticket(s) first.", statusCode: 409);
             }
 
             user.IsActive = activate;

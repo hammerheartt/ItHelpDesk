@@ -24,6 +24,9 @@ namespace ItHelpDesk.Api.Services
         public static bool IsTransitionAllowed(TicketStatus from, TicketStatus to, string role) =>
             Transitions.TryGetValue((from, to), out var roles) && roles.Contains(role);
 
+        public static bool IsValidTransition(TicketStatus from, TicketStatus to) =>
+            Transitions.ContainsKey((from, to));
+
         public static TimeSpan DeadlineFor(TicketPriority priority) => priority switch
         {
             TicketPriority.Critical => TimeSpan.FromHours(4),

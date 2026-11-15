@@ -27,7 +27,8 @@ namespace ItHelpDesk.Api.Repositories
                 t.AssignedToId == technicianId &&
                 (t.Status == TicketStatus.Assigned ||
                  t.Status == TicketStatus.InProgress ||
-                 t.Status == TicketStatus.Reopened));
+                 t.Status == TicketStatus.Reopened ||
+                 t.Status == TicketStatus.Resolved));
         }
 
         public async Task<PagedList<Ticket>> GetFiltered(string? createdById, string? assignedToId, TicketStatus? status,
