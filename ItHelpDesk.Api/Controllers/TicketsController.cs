@@ -141,6 +141,15 @@ namespace ItHelpDesk.Api.Controllers
             return false;
         }
 
+        private TicketHistory HistoryEntry(string action, string? oldValue, string? newValue) => new()
+        {
+            Action = action,
+            OldValue = oldValue,
+            NewValue = newValue,
+            ChangedById = CurrentUserId(),
+            ChangedAt = DateTimeOffset.UtcNow
+        };
+
         private async Task<bool> IsActiveCategory(int categoryId)
         {
             var category = await _categoriesRepository.Get(categoryId);
