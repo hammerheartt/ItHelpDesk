@@ -35,6 +35,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<ITicketsRepository, TicketsRepository>();
 builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
+builder.Services.AddScoped<IStatsRepository, StatsRepository>();
 
 builder.Services.AddAuthentication(options =>
 {

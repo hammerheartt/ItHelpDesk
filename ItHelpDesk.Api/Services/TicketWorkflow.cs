@@ -1,5 +1,6 @@
 ﻿using ItHelpDesk.Api.Auth;
 using ItHelpDesk.Api.Data.Entities;
+using System.Linq.Expressions;
 
 namespace ItHelpDesk.Api.Services
 {
@@ -38,6 +39,12 @@ namespace ItHelpDesk.Api.Services
 
         public static bool IsOverdue(Ticket ticket, DateTimeOffset now) =>
             ticket.DueAt != null && ticket.DueAt < now && OpenStatuses.Contains(ticket.Status);
+
+        public static Expression<Func<Ticket, bool>> IsOverdueQuery(DateTimeOffset now) =>
+             t => t.DueAt != null && t.DueAt < now &&
+             (t.Status == TicketStatus.Assigned ||
+              t.Status == TicketStatus.InProgress ||
+              t.Status == TicketStatus.Reopened);
 
         public static readonly TicketStatus[] FinalStatuses = { TicketStatus.Closed, TicketStatus.Cancelled };
         public static bool CanView(Ticket ticket, string userId, string role) => role switch

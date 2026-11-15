@@ -1,6 +1,7 @@
 ﻿using ItHelpDesk.Api.Data;
 using ItHelpDesk.Api.Data.Entities;
 using ItHelpDesk.Api.Data.Paging;
+using ItHelpDesk.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ItHelpDesk.Api.Repositories
@@ -45,11 +46,7 @@ namespace ItHelpDesk.Api.Repositories
             if (categoryId != null) { query = query.Where(t => t.CategoryId == categoryId); }
             if (overdue == true)
             {
-                var now = DateTimeOffset.UtcNow;
-                query = query.Where(t => t.DueAt != null && t.DueAt < now &&
-                    (t.Status == TicketStatus.Assigned ||
-                     t.Status == TicketStatus.InProgress ||
-                     t.Status == TicketStatus.Reopened));
+                query = query.Where(TicketWorkflow.IsOverdueQuery(DateTimeOffset.UtcNow));
             }
 
             query = query.OrderByDescending(t => t.CreatedAt);
