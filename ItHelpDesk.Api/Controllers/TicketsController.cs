@@ -85,13 +85,7 @@ namespace ItHelpDesk.Api.Controllers
                 CreatedAt = now,
                 Status = TicketStatus.New
             };
-            ticket.History.Add(new TicketHistory
-            {
-                Action = "Created",
-                NewValue = TicketStatus.New.ToString(),
-                ChangedById = userId,
-                ChangedAt = now
-            });
+            ticket.History.Add(HistoryEntry("Created", null, TicketStatus.New.ToString()));
 
             await _ticketsRepository.Create(ticket);
 
@@ -118,12 +112,6 @@ namespace ItHelpDesk.Api.Controllers
             ticket.Title = dto.Title;
             ticket.Description = dto.Description;
             ticket.CategoryId = dto.CategoryId!.Value;
-            ticket.History.Add(new TicketHistory
-            {
-                Action = "Edited",
-                ChangedById = CurrentUserId(),
-                ChangedAt = DateTimeOffset.UtcNow
-            });
 
             await _ticketsRepository.SaveChanges();
 
