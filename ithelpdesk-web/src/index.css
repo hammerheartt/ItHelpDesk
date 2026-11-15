@@ -1,0 +1,79 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    color: #222;
+    background: #f3f4f6;
+}
+
+h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 16px;
+}
+
+h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+a {
+    color: #1f5fa8;
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+button {
+    font: inherit;
+    padding: 6px 14px;
+    border: 1px solid #b8bcc4;
+    border-radius: 3px;
+    background: #fff;
+    cursor: pointer;
+}
+
+    button:hover {
+        background: #eef0f3;
+    }
+
+    button.primary {
+        background: #1f5fa8;
+        border-color: #1f5fa8;
+        color: #fff;
+    }
+
+        button.primary:hover {
+            background: #194d88;
+        }
+
+    button:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+
+input, select, textarea {
+    font: inherit;
+    padding: 6px 8px;
+    border: 1px solid #b8bcc4;
+    border-radius: 3px;
+    background: #fff;
+    width: 100%;
+}
+
+.panel {
+    background: #fff;
+    border: 1px solid #d9dce1;
+    padding: 16px;
+}
+
+.error {
+    color: #b42318;
+}
