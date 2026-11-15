@@ -224,15 +224,19 @@ namespace ItHelpDesk.Api.Controllers
             return Ok(_mapper.Map<TicketDto>(updated));
         }
 
-        private bool CanAccess(Ticket ticket)
+        [HttpGet("{ticketId}/history")]
+        public async Task<ActionResult<IEnumerable<TicketHistoryDto>>> GetHistory(int ticketId)
         {
-            if (User.IsInRole(ItHelpDeskRoles.Admin)) return true;
+            var ticket = await _ticketsRepository.Get(ticketId);
+            if (ticket == null || !CanAccess(ticket)) return NotFound();
 
-            var userId = CurrentUserId();
-            if (User.IsInRole(ItHelpDeskRoles.Employee)) return ticket.CreatedById == userId;
-            if (User.IsInRole(ItHelpDeskRoles.Technician)) return ticket.AssignedToId == userId;
-            return false;
+            var history = await _ticketsRepository.GetHistory(ticketId);
+            return Ok(history.Select(h => _mapper.Map<TicketHistoryDto>(h)));
         }
+
+        private bool CanAccess(Ticket ticket) =>
+            TicketWorkflow.CanView(ticket, User.GetUserId(), User.GetRole());
+
 
         private TicketHistory HistoryEntry(string action, string? oldValue, string? newValue) => new()
         {
@@ -249,8 +253,8 @@ namespace ItHelpDesk.Api.Controllers
             return category != null && category.IsActive;
         }
 
-        private string CurrentUserId() => User.FindFirstValue(JwtRegisteredClaimNames.Sub)!;
-        private string CurrentRole() => ItHelpDeskRoles.All.First(User.IsInRole);
+        private string CurrentUserId() => User.GetUserId();
+        private string CurrentRole() => User.GetRole();
 
         private ActionResult FieldError(string field, string message)
         {

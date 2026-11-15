@@ -34,6 +34,7 @@ builder.Services.AddScoped<SessionService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<ITicketsRepository, TicketsRepository>();
+builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
 
 builder.Services.AddAuthentication(options =>
 {

@@ -13,6 +13,7 @@ namespace ItHelpDesk.Api.Repositories
                                             SearchParameters searchParameters);
         Task<Ticket?> Get(int ticketId);
         Task Create(Ticket ticket);
+        Task<List<TicketHistory>> GetHistory(int ticketId);
         Task SaveChanges();
     }
 
@@ -64,6 +65,15 @@ namespace ItHelpDesk.Api.Repositories
         {
             _db.Tickets.Add(ticket);
             await _db.SaveChangesAsync();
+        }
+
+        public async Task<List<TicketHistory>> GetHistory(int ticketId)
+        {
+            return await _db.TicketHistory
+                .Include(h => h.ChangedBy)
+                .Where(h => h.TicketId == ticketId)
+                .OrderBy(h => h.ChangedAt).ThenBy(h => h.Id)
+                .ToListAsync();
         }
 
         public async Task SaveChanges()

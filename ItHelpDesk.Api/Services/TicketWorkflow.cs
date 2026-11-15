@@ -38,5 +38,14 @@ namespace ItHelpDesk.Api.Services
 
         public static bool IsOverdue(Ticket ticket, DateTimeOffset now) =>
             ticket.DueAt != null && ticket.DueAt < now && OpenStatuses.Contains(ticket.Status);
+
+        public static readonly TicketStatus[] FinalStatuses = { TicketStatus.Closed, TicketStatus.Cancelled };
+        public static bool CanView(Ticket ticket, string userId, string role) => role switch
+        {
+            ItHelpDeskRoles.Admin => true,
+            ItHelpDeskRoles.Employee => ticket.CreatedById == userId,
+            ItHelpDeskRoles.Technician => ticket.AssignedToId == userId,
+            _ => false
+        };
     }
 }
