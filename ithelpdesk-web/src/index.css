@@ -222,3 +222,8 @@ textarea { resize: vertical; }
 
 .badge.active { background: #ecf7ef; color: #1e6b34; border-color: #c4e5cd; }
 .badge.inactive { background: #f1f2f4; color: #555; border-color: #d9dce1; }
+
+.add-user { margin-bottom: 16px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+select.compact { width: auto; padding: 3px 6px; }
+.error-list { color: #b42318; margin: 0 0 12px; padding-left: 18px; }
