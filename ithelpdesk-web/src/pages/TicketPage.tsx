@@ -7,6 +7,9 @@ import StatusBadge from '../components/StatusBadge'
 import CommentForm from '../components/CommentForm'
 import NotFoundPage from './NotFoundPage'
 import { formatDate, statusLabel } from '../utils/format'
+import TicketActions from '../components/TicketActions'
+import AssignForm from '../components/AssignForm'
+import { canAssign } from '../utils/workflow'
 
 type PageData = {
     ticketId: number
@@ -29,6 +32,7 @@ export default function TicketPage() {
 
   const [data, setData] = useState<PageData | null>(null)
   const [loadError, setLoadError] = useState<LoadError | null>(null)
+  const [version, setVersion] = useState(0)
 
   useEffect(() => {
     if (!validId) return
@@ -52,7 +56,7 @@ export default function TicketPage() {
         }
     })
     return () => { ignore = true }
-  }, [ticketId, validId])
+  }, [ticketId, validId, version])
 
   if (!validId) return <NotFoundPage />
   if (loadError?.ticketId === ticketId) {
@@ -66,6 +70,10 @@ export default function TicketPage() {
 
   function addComment(comment: Comment) {
     setData(current => current && { ...current, comments: [...current.comments, comment]})
+  }
+
+  function reload() {
+    setVersion(v => v + 1)
   }
 
   return (
@@ -111,6 +119,8 @@ export default function TicketPage() {
         </div>
 
         <div className="stack">
+          <TicketActions ticket={ticket} role={user!.role} onChanged={reload} />
+          {user!.role === 'Admin' && canAssign(ticket) && <AssignForm ticket={ticket} onChanged={reload} />}
           <section className="panel">
             <h2>Details</h2>
             <dl className="details">

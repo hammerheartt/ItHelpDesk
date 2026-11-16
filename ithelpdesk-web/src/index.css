@@ -189,3 +189,4 @@ textarea { resize: vertical; }
 .history { list-style: none; padding: 0; margin: 0; font-size: 13px; }
 .history li { padding: 6px 0; border-bottom: 1px solid #f0f1f3; }
 .history time { display: block; color: #888; font-size: 12px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
