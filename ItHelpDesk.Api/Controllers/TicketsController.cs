@@ -117,7 +117,8 @@ namespace ItHelpDesk.Api.Controllers
             ticket.Description = dto.Description;
             ticket.CategoryId = dto.CategoryId!.Value;
 
-            await _ticketsRepository.SaveChanges();
+            if (!await _ticketsRepository.SaveChanges())
+                return Problem(detail: "The ticket was changed by someone else. Reload it and try again.", statusCode: 409);
 
             var updated = await _ticketsRepository.Get(ticketId);
             return Ok(_mapper.Map<TicketDto>(updated));
@@ -159,7 +160,8 @@ namespace ItHelpDesk.Api.Controllers
                 ticket.Status = TicketStatus.Assigned;
             }
 
-            await _ticketsRepository.SaveChanges();
+            if (!await _ticketsRepository.SaveChanges())
+                return Problem(detail: "The ticket was changed by someone else. Reload it and try again.", statusCode: 409);
 
             var updated = await _ticketsRepository.Get(ticketId);
             return Ok(_mapper.Map<TicketDto>(updated));
@@ -218,7 +220,8 @@ namespace ItHelpDesk.Api.Controllers
             ticket.History.Add(HistoryEntry("StatusChanged", from.ToString(), to.ToString()));
             ticket.Status = to;
 
-            await _ticketsRepository.SaveChanges();
+            if (!await _ticketsRepository.SaveChanges())
+                return Problem(detail: "The ticket was changed by someone else. Reload it and try again.", statusCode: 409);
 
             var updated = await _ticketsRepository.Get(ticketId);
             return Ok(_mapper.Map<TicketDto>(updated));

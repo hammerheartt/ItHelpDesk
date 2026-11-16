@@ -31,10 +31,7 @@ export default function App() {
 
                 <Route element={<RequireRole roles={['Employee']} />}>
                     <Route path="tickets/new" element={<NewTicketPage />} />
-                    <Route element={<RequireRole roles={['Employee']} />}>
-                        <Route path="tickets/new" element={<NewTicketPage />} />
-                        <Route path="tickets/:id/edit" element={<EditTicketPage />} />
-                    </Route>
+                    <Route path="tickets/:id/edit" element={<EditTicketPage />} />
                 </Route>
 
                  <Route element={<RequireRole roles={['Admin']} />}>

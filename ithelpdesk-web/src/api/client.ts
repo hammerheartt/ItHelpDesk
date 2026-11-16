@@ -21,6 +21,12 @@ export class ApiError extends Error {
 let accessToken: string | null = null
 let refreshing: Promise<boolean> | null = null
 
+let sessionExpiredHandler: (() => void) | null = null
+
+export function onSessionExpired(handler: (() => void) | null) {
+    sessionExpiredHandler = handler
+}
+
 function refresh(): Promise<boolean> {
     if (!refreshing){
         refreshing = fetch('/api/auth/refresh', { method: 'POST'})
@@ -51,13 +57,18 @@ async function request(path: string, options: RequestOptions = {}): Promise<Resp
 
         let res = await send()
 
-        if (res.status === 401 && !path.startsWith('/auth/') && (await refresh())) {
-        res = await send()
+        if (res.status === 401 && !path.startsWith('/auth/')) {
+            if (await refresh()) {
+                res = await send()
+            } else {
+                accessToken = null
+                sessionExpiredHandler?.()
+            }
         }
 
         if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as ProblemDetails | null
-        throw new ApiError(res.status, body)
+            const body = (await res.json().catch(() => null)) as ProblemDetails | null
+            throw new ApiError(res.status, body)
         }
 
     return res

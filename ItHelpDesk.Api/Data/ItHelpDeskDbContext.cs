@@ -45,7 +45,7 @@ namespace ItHelpDesk.Api.Data
                 o.Property(e => e.Title).HasMaxLength(200);
                 o.Property(e => e.Description).HasMaxLength(4000);
                 o.Property(e => e.ResolutionNote).HasMaxLength(2000);
-                o.Property(e => e.Status).HasConversion<string>().HasMaxLength(20);
+                o.Property(e => e.Status).HasConversion<string>().HasMaxLength(20).IsConcurrencyToken();
                 o.Property(e => e.Priority).HasConversion<string>().HasMaxLength(20);
 
                 o.HasIndex(e => e.Status);

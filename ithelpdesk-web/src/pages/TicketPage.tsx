@@ -117,7 +117,7 @@ export default function TicketPage() {
                 {[...comments].reverse().map(c => (
                 <li key={c.id} className={c.isInternal ? 'comment internal' : 'comment'}>
                     <div className="comment-meta">
-                    <strong>{c.authorName}</strong> · {formatDate(c.createdAt)}
+                    <strong>{c.authorName}</strong> {formatDate(c.createdAt)}
                     {c.isInternal && <span className="badge internal-badge">Internal</span>}
                     </div>
                     <p className="pre">{c.text}</p>

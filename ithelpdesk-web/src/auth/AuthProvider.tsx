@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { AuthContext } from "./AuthContext";
 import { readUser, type CurrentUser } from "./jwt";
-import { login as apiLogin, logout as apiLogout, restoreSession } from '../api/client'
+import { login as apiLogin, logout as apiLogout, onSessionExpired, restoreSession } from '../api/client'
 
 export function AuthProvider({ children }: { children: ReactNode}) {
     const [user, setUser] = useState<CurrentUser | null>(null)
@@ -11,6 +11,11 @@ export function AuthProvider({ children }: { children: ReactNode}) {
         restoreSession()
             .then(token => { if (token) setUser(readUser(token))})
             .finally(() => setLoading(false))
+    }, [])
+
+    useEffect(() => {
+        onSessionExpired(() => setUser(null))
+        return () => onSessionExpired(null)
     }, [])
 
     async function login(email: string, password: string) {

@@ -86,6 +86,7 @@ namespace ItHelpDesk.Api.Auth
                     ValidAudience = _refreshAudience,
                     IssuerSigningKey = _authSigningKey,
                     ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromSeconds(30),
                 };
 
                 claims = tokenHandler.ValidateToken(refreshToken, validationParameters, out _);

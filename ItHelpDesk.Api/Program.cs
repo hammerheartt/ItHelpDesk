@@ -52,6 +52,7 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters.ValidateLifetime = true;
     options.TokenValidationParameters.IssuerSigningKey =
         new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!));
+    options.TokenValidationParameters.ClockSkew = TimeSpan.FromSeconds(30);
 });
 builder.Services.AddAuthorization();
 

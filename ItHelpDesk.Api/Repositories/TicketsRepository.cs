@@ -15,7 +15,7 @@ namespace ItHelpDesk.Api.Repositories
         Task<Ticket?> Get(int ticketId);
         Task Create(Ticket ticket);
         Task<List<TicketHistory>> GetHistory(int ticketId);
-        Task SaveChanges();
+        Task<bool> SaveChanges();
     }
 
     public class TicketsRepository : ITicketsRepository
@@ -73,9 +73,17 @@ namespace ItHelpDesk.Api.Repositories
                 .ToListAsync();
         }
 
-        public async Task SaveChanges()
+        public async Task<bool> SaveChanges()
         {
-            await _db.SaveChangesAsync();
+            try
+            {
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
         }
 
         private IQueryable<Ticket> WithDetails()
