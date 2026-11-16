@@ -77,3 +77,11 @@ input, select, textarea {
 .error {
     color: #b42318;
 }
+
+
+label {display: block; margin-bottom: 12px; color: #444; }
+label input, label select, label textarea { margin-top: 4px; }
+
+.login { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.login form { width: 320px; }
+.login button { width: 100%; }
