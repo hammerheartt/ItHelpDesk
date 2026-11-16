@@ -1,3 +1,5 @@
+import type { PaginationMetadata } from "./types"
+
 type ProblemDetails = {
     title?: string
     detail?: string
@@ -36,13 +38,13 @@ function refresh(): Promise<boolean> {
 
 type RequestOptions = { method?: string; body?: unknown }
 
-export async function api<T>(path: string, options: RequestOptions = {}): Promise<T> {
+async function request(path: string, options: RequestOptions = {}): Promise<Response> {
     const send = () =>
         fetch('/api' + path, {
             method: options.method ?? 'GET',
             headers: {
-                ...(options.body !== undefined ? { 'Content-Type': 'application/json' } : {}),
-                ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+            ...(options.body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
             },
             body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
         })
@@ -50,16 +52,29 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
         let res = await send()
 
         if (res.status === 401 && !path.startsWith('/auth/') && (await refresh())) {
-            res = await send()
+        res = await send()
         }
 
         if (!res.ok) {
-            const body = (await res.json().catch(() => null)) as ProblemDetails | null 
-            throw new ApiError(res.status, body)
+        const body = (await res.json().catch(() => null)) as ProblemDetails | null
+        throw new ApiError(res.status, body)
         }
 
-        if (res.status === 204) return undefined as T
-        return (await res.json()) as T
+    return res
+    }
+
+    export async function api<T>(path: string, options: RequestOptions = {}): Promise<T> {
+    const res = await request(path, options)
+    if (res.status === 204) return undefined as T
+    return (await res.json()) as T
+}
+
+export type Paged<T> = { items: T[], meta: PaginationMetadata }
+
+export async function apiPaged<T>(path: string): Promise<Paged<T>> {
+    const res = await request(path)
+    const meta = JSON.parse(res.headers.get('Pagination') ?? 'null') as PaginationMetadata
+    return { items: (await res.json()) as T[], meta }
 }
 
 export async function login(email: string, password: string): Promise<string> {

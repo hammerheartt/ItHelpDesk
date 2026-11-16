@@ -10,7 +10,7 @@ export default function LoginPage() {
     const [error, setError] = useState<string | null>(null)
     const [busy, setBusy] = useState(false)
 
-    if (loading) return <p className="page-message">Loading...</p>
+    if (loading) return <p className="page-message"></p>
     if (user) return <Navigate to="/" replace />
 
     async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {

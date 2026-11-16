@@ -114,3 +114,40 @@ label input, label select, label textarea { margin-top: 4px; }
 
 .content { max-width: 1100px; margin: 24px auto; padding: 0 24px; }
 .page-message { margin: 40px; color: #666; }
+
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.page-header h1 { margin: 0; }
+
+a.button {
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1px solid #b8bcc4;
+  border-radius: 3px;
+  background: #fff;
+  color: #222;
+}
+a.button:hover { text-decoration: none; background: #eef0f3; }
+a.button.primary { background: #1f5fa8; border-color: #1f5fa8; color: #fff; }
+a.button.primary:hover { background: #194d88; }
+
+.filters { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+.filters select { width: auto; }
+label.checkbox { display: flex; align-items: center; gap: 6px; margin: 0; }
+label.checkbox input { width: auto; margin: 0; }
+
+.table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d9dce1; }
+.table th, .table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #e6e8eb; }
+.table th { background: #f7f8fa; font-weight: 600; color: #444; }
+.table tbody tr:hover td { background: #fafbfc; }
+.table.loading { opacity: 0.5; }
+.table .empty { text-align: center; color: #666; padding: 24px; }
+.overdue { color: #b42318; font-weight: 600; }
+
+.badge { display: inline-block; padding: 1px 8px; border: 1px solid; border-radius: 3px; font-size: 12px; }
+.status-new { background: #eef4fb; color: #1f5fa8; border-color: #c7dbf2; }
+.status-assigned, .status-inprogress { background: #fff7e6; color: #8a5a00; border-color: #f0dcb0; }
+.status-reopened { background: #fdeceb; color: #b42318; border-color: #f4c7c3; }
+.status-resolved { background: #ecf7ef; color: #1e6b34; border-color: #c4e5cd; }
+.status-closed, .status-cancelled { background: #f1f2f4; color: #555; border-color: #d9dce1; }
+
+.pagination { display: flex; align-items: center; gap: 12px; margin-top: 12px; color: #555; }
