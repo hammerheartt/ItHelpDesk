@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3ea48030-0533-4e5e-84f7-f684398a213d",
+		"_postman_id": "660f8f09-df09-4fe5-91dc-b9b350b8f603",
 		"name": "ItHelpDesk",
 		"description": "API tests for ItHelpDesk. Run the whole collection in order with the Collection Runner. Works on a fresh database and on re-runs. Requires the 'ItHelpDesk Local' environment.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -6766,6 +6766,169 @@
 									"language": "json"
 								}
 							}
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Concurrency",
+			"item": [
+				{
+					"name": "Jonas Create Race Ticket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is 201\", () => pm.response.to.have.status(201));\npm.environment.set(\"raceTicketId\", pm.response.json().id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tickets",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tickets"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Race: two clicks at once\",\n    \"description\": \"Ticket created by the workflow tests.\",\n    \"categoryId\": {{hardwareId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jonasToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Race Ticket To Petras (Low)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tickets/{{raceTicketId}}/assign",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tickets",
+								"{{raceTicketId}}",
+								"assign"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"technicianId\": \"{{petrasUserId}}\",\n    \"priority\": \"Low\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Two Parallel Start Work → Check History",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const base = pm.environment.get(\"baseUrl\");\nconst id = pm.environment.get(\"raceTicketId\");\nconst request = {\n    url: base + \"/api/tickets/\" + id + \"/status\",\n    method: \"PATCH\",\n    header: {\n        \"Content-Type\": \"application/json\",\n        \"Authorization\": \"Bearer \" + pm.environment.get(\"petrasToken\")\n    },\n    body: { mode: \"raw\", raw: JSON.stringify({ status: \"InProgress\" }) }\n};\nconst codes = [];\nconst record = (err, res) => {\n    codes.push(err ? 0 : res.code);\n    if (codes.length === 2) pm.environment.set(\"raceCodes\", JSON.stringify(codes.sort()));\n};\npm.environment.unset(\"raceCodes\");\npm.sendRequest(request, record);\npm.sendRequest(request, record);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));\nconst codes = JSON.parse(pm.environment.get(\"raceCodes\") || \"[]\");\npm.test(\"Both parallel requests answered\", () => pm.expect(codes.length).to.eql(2));\npm.test(\"Exactly one succeeded, the other got 409\", () => pm.expect(codes).to.eql([200, 409]));\nconst starts = pm.response.json().filter(h =>\n    h.action === \"StatusChanged\" && h.oldValue === \"Assigned\" && h.newValue === \"InProgress\");\npm.test(\"History has exactly one Assigned -> InProgress row\", () => pm.expect(starts.length).to.eql(1));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tickets/{{raceTicketId}}/history",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tickets",
+								"{{raceTicketId}}",
+								"history"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Race Ticket Is In Progress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));\npm.test(\"Status is InProgress\", () => pm.expect(pm.response.json().status).to.eql(\"InProgress\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tickets/{{raceTicketId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tickets",
+								"{{raceTicketId}}"
+							]
 						}
 					},
 					"response": []
