@@ -43,7 +43,7 @@ export default function NewTicketPage() {
         <h1>New ticket</h1>
       </div>
 
-      <form className="panel form" onSubmit={handleSubmit}>
+      <form className="panel" onSubmit={handleSubmit}>
         <label>
           Title
           <input

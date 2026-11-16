@@ -163,3 +163,29 @@ textarea { resize: vertical; }
 .field-error { display: block; margin-top: 4px; color: #b42318; font-size: 13px; }
 .hint { display: block; margin-top: 4px; color: #888; font-size: 12px; text-align: right; }
 .form-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+.ticket-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.ticket-header h1 { margin: 0; }
+
+.ticket-layout { display: grid; grid-template-columns: 1fr 300px; gap: 16px; align-items: start; }
+.stack > * + * { margin-top: 16px; }
+
+.pre { white-space: pre-wrap; margin: 0; }
+.muted { color: #666; }
+
+.resolution { margin-top: 16px; padding: 12px; background: #ecf7ef; border: 1px solid #c4e5cd; }
+.resolution p { margin-top: 4px; }
+
+.details { display: grid; grid-template-columns: 100px 1fr; gap: 6px 12px; margin: 0; }
+.details dt { color: #666; }
+.details dd { margin: 0; }
+
+.comments { list-style: none; padding: 0; margin: 0 0 12px; }
+.comment { padding: 10px 0; border-bottom: 1px solid #e6e8eb; }
+.comment.internal { padding: 10px; background: #fffbeb; border-left: 3px solid #e0b400; border-radius: 0; }
+.comment-meta { color: #666; font-size: 13px; margin-bottom: 4px; }
+.internal-badge { margin-left: 6px; background: #fff7e6; color: #8a5a00; border-color: #f0dcb0; }
+
+.history { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+.history li { padding: 6px 0; border-bottom: 1px solid #f0f1f3; }
+.history time { display: block; color: #888; font-size: 12px; }

@@ -155,7 +155,7 @@ export default function TicketsPage() {
       {meta && meta.totalPages > 1 && (
         <div className="pagination">
           <button disabled={meta.currentPage <= 1} onClick={() => goToPage(meta.currentPage - 1)}>Previous</button>
-          <span>Page {meta.currentPage} of {meta.totalPages} · {meta.totalCount} tickets</span>
+          <span>Page {meta.currentPage} of {meta.totalPages} | {meta.totalCount} tickets</span>
           <button disabled={meta.currentPage >= meta.totalPages} onClick={() => goToPage(meta.currentPage + 1)}>Next</button>
         </div>
       )}

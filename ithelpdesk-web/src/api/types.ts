@@ -39,3 +39,22 @@ export type PaginationMetadata = {
   previousPageLink: string | null
   nextPageLink: string | null
 }
+
+export type Comment = {
+    id: number
+    text: string
+    isInternal: boolean
+    authorId: string
+    authorName: string
+    createdAt: string
+}
+
+export type HistoryEntry = {
+    id: number
+    action: string
+    oldValue: string | null
+    newValue: string | null
+    changedById: string
+    changedByName: string
+    changedAt: string
+}
