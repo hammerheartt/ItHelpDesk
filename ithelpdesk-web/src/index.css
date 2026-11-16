@@ -68,6 +68,12 @@ input, select, textarea {
     width: 100%;
 }
 
+select,
+input[type="checkbox"],
+label.checkbox {
+  cursor: pointer;
+}
+
 .panel {
     background: #fff;
     border: 1px solid #d9dce1;
@@ -151,3 +157,9 @@ label.checkbox input { width: auto; margin: 0; }
 .status-closed, .status-cancelled { background: #f1f2f4; color: #555; border-color: #d9dce1; }
 
 .pagination { display: flex; align-items: center; gap: 12px; margin-top: 12px; color: #555; }
+
+.narrow { max-width: 640px; margin: 0 auto; }
+textarea { resize: vertical; }
+.field-error { display: block; margin-top: 4px; color: #b42318; font-size: 13px; }
+.hint { display: block; margin-top: 4px; color: #888; font-size: 12px; text-align: right; }
+.form-actions { display: flex; gap: 8px; margin-top: 8px; }
