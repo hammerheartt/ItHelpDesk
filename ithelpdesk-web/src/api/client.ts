@@ -21,7 +21,7 @@ let refreshing: Promise<boolean> | null = null
 
 function refresh(): Promise<boolean> {
     if (!refreshing){
-        refreshing = fetch('api/auth/refresh', { method: 'POST'})
+        refreshing = fetch('/api/auth/refresh', { method: 'POST'})
             .then(async res => {
                 if (!res.ok) return false
                 const data = (await res.json()) as { accessToken: string }
@@ -49,7 +49,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
 
         let res = await send()
 
-        if (res.status == 401 && !path.startsWith('auth') && (await refresh())) {
+        if (res.status === 401 && !path.startsWith('/auth/') && (await refresh())) {
             res = await send()
         }
 
@@ -58,7 +58,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
             throw new ApiError(res.status, body)
         }
 
-        if (res.status == 204) return undefined as T
+        if (res.status === 204) return undefined as T
         return (await res.json()) as T
 }
 
