@@ -2,6 +2,8 @@
 
 IT helpdesk ticket system. Employees report IT problems, technicians resolve them, and administrators assign work and manage users.
 
+**Live demo:** https://ithelpdesk-hammerheart.polandcentral.cloudapp.azure.com
+
 ## Features
 
 - Ticket workflow: New → Assigned → In progress → Resolved → Closed, with reopen and cancel
