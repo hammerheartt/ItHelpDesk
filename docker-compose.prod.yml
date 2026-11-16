@@ -1,0 +1,50 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: helpdesk
+      MYSQL_USER: helpdesk
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  api:
+    build:
+      context: .
+      dockerfile: ItHelpDesk.Api/Dockerfile
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__ItHelpDesk: "Server=mysql;Port=3306;Database=helpdesk;User=helpdesk;Password=${MYSQL_PASSWORD};"
+      Jwt__Secret: ${JWT_SECRET}
+      Admin__Email: ${ADMIN_EMAIL}
+      Admin__FullName: System Administrator
+      Admin__Password: ${ADMIN_PASSWORD}
+      Company__EmailDomain: ${EMAIL_DOMAIN}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  web:
+    build: ./ithelpdesk-web
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy-data:/data
+    depends_on:
+      - api
+
+volumes:
+  mysql-data:
+  caddy-data:

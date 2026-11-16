@@ -123,7 +123,7 @@ namespace ItHelpDesk.Api.Auth
                 await _sessionService.InvalidateSessionAsync(sessionId);
             }
 
-            Response.Cookies.Delete("RefreshToken", new CookieOptions { Path = "/api/auth" });
+            Response.Cookies.Delete("RefreshToken", new CookieOptions { Path = "/api/auth", Secure = Request.IsHttps });
             return NoContent();
         }
 
@@ -134,8 +134,8 @@ namespace ItHelpDesk.Api.Auth
                 HttpOnly = true,
                 SameSite = SameSiteMode.Lax,
                 Expires = expiresAt,
-                Path = "/api/auth"
-                // Secure = true
+                Path = "/api/auth",
+                Secure = Request.IsHttps
             });
         }
 
