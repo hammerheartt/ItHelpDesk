@@ -1,6 +1,7 @@
 services:
   mysql:
     image: mysql:8.4
+    command: --performance-schema=OFF
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -22,6 +23,7 @@ services:
     restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      DOTNET_gcServer: "0"
       ConnectionStrings__ItHelpDesk: "Server=mysql;Port=3306;Database=helpdesk;User=helpdesk;Password=${MYSQL_PASSWORD};"
       Jwt__Secret: ${JWT_SECRET}
       Admin__Email: ${ADMIN_EMAIL}
