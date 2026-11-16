@@ -1,15 +1,19 @@
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { ApiError } from "../api/client";
+import { Navigate } from "react-router";
 
 export default function LoginPage() {
-    const { login } = useAuth()
+    const { user, loading, login } = useAuth()
     const [ email, setEmail ] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState<string | null>(null)
     const [busy, setBusy] = useState(false)
 
-    async function handleSubmit(e: FormEvent) {
+    if (loading) return <p className="page-message">Loading...</p>
+    if (user) return <Navigate to="/" replace />
+
+    async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
         setError(null)
         setBusy(true)
