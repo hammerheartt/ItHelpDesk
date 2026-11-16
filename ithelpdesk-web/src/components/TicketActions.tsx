@@ -1,4 +1,5 @@
 import { useState, type SubmitEvent } from 'react'
+import { Link } from 'react-router'
 import { api, ApiError } from '../api/client'
 import type { Ticket, TicketStatus } from '../api/types'
 import type { Role } from '../auth/jwt'
@@ -26,7 +27,8 @@ export default function TicketActions({ ticket, role, onChanged }: Props) {
   const [busy, setBusy] = useState(false)
 
   const actions = allowedTransitions(ticket, role)
-  if (actions.length === 0) return null
+  const canEdit = role === 'Employee' && ticket.status === 'New'
+  if (actions.length === 0 && !canEdit) return null
 
   async function changeStatus(to: TicketStatus, comment?: string) {
     setError(null)
@@ -78,11 +80,12 @@ export default function TicketActions({ ticket, role, onChanged }: Props) {
         </form>
       ) : (
         <div className="actions">
+          {canEdit && <Link to={`/tickets/${ticket.id}/edit`} className="button">Edit</Link>}
           {actions.map((to, i) => (
-            <button key={to} className={i === 0 ? 'primary' : ''} disabled={busy} onClick={() => handleClick(to)}>
+            <button key={to} className={i === 0 && to !== 'Cancelled' ? 'primary' : ''} disabled={busy} onClick={() => handleClick(to)}>
               {ACTION_LABELS[to]}
             </button>
-          ))}
+        ))}
         </div>
       )}
 

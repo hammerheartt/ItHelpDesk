@@ -167,7 +167,7 @@ textarea { resize: vertical; }
 .ticket-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
 .ticket-header h1 { margin: 0; }
 
-.ticket-layout { display: grid; grid-template-columns: 260px 1fr 280px; gap: 16px; align-items: start; }
+.ticket-layout { display: grid; grid-template-columns: 260px minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
 .stack > * + * { margin-top: 16px; }
 
 .pre { white-space: pre-wrap; margin: 0; }
@@ -203,3 +203,10 @@ textarea { resize: vertical; }
 .comments-panel .comments { flex: 1; min-height: 0; overflow-y: auto; margin: 0 0 12px; padding-right: 8px; }
 
 .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.pre,
+.ticket-header h1,
+.table td,
+.history li {
+  overflow-wrap: anywhere;
+}

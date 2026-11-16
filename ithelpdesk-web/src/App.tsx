@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage'
 import TicketsPage from './pages/TicketsPage'
 import TicketPage from './pages/TicketPage'
 import NewTicketPage from './pages/NewTicketPage'
+import EditTicketPage from './pages/EditTicketPage'
 import DashboardPage from './pages/DashboardPage'
 import UsersPage from './pages/UsersPage'
 import CategoriesPage from './pages/CategoriesPage'
@@ -30,6 +31,10 @@ export default function App() {
 
                 <Route element={<RequireRole roles={['Employee']} />}>
                     <Route path="tickets/new" element={<NewTicketPage />} />
+                    <Route element={<RequireRole roles={['Employee']} />}>
+                        <Route path="tickets/new" element={<NewTicketPage />} />
+                        <Route path="tickets/:id/edit" element={<EditTicketPage />} />
+                    </Route>
                 </Route>
 
                  <Route element={<RequireRole roles={['Admin']} />}>
