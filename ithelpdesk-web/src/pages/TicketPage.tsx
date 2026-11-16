@@ -5,23 +5,23 @@ import { api, ApiError } from '../api/client'
 import type { Comment, HistoryEntry, Ticket, TicketStatus } from '../api/types'
 import StatusBadge from '../components/StatusBadge'
 import CommentForm from '../components/CommentForm'
-import NotFoundPage from './NotFoundPage'
-import { formatDate, statusLabel } from '../utils/format'
 import TicketActions from '../components/TicketActions'
 import AssignForm from '../components/AssignForm'
+import NotFoundPage from './NotFoundPage'
+import { formatDate, statusLabel } from '../utils/format'
 import { canAssign } from '../utils/workflow'
 
 type PageData = {
-    ticketId: number
-    ticket: Ticket
-    comments: Comment[]
-    history: HistoryEntry[]
+  ticketId: number
+  ticket: Ticket
+  comments: Comment[]
+  history: HistoryEntry[]
 }
 
-type LoadError = { 
-    ticketId: number
-    status: number
-    message: string
+type LoadError = {
+  ticketId: number
+  status: number
+  message: string
 }
 
 export default function TicketPage() {
@@ -38,23 +38,24 @@ export default function TicketPage() {
     if (!validId) return
     let ignore = false
 
-  Promise.all([
-    api<Ticket>(`/tickets/${ticketId}`),
-    api<Comment[]>(`/tickets/${ticketId}/comments`),
-    api<HistoryEntry[]>(`/tickets/${ticketId}/history`),
-  ])
-    .then(([ticket, comments, history]) => {
+    Promise.all([
+      api<Ticket>(`/tickets/${ticketId}`),
+      api<Comment[]>(`/tickets/${ticketId}/comments`),
+      api<HistoryEntry[]>(`/tickets/${ticketId}/history`),
+    ])
+      .then(([ticket, comments, history]) => {
         if (!ignore) setData({ ticketId, ticket, comments, history })
-    })
-    .catch(err => {
+      })
+      .catch(err => {
         if (!ignore) {
-            setLoadError({
-                ticketId,
-                status: err instanceof ApiError ? err.status : 0,
-                message: err instanceof ApiError ? err.message : 'Cannot reach the server.',
-            })
+          setLoadError({
+            ticketId,
+            status: err instanceof ApiError ? err.status : 0,
+            message: err instanceof ApiError ? err.message : 'Cannot reach the server.',
+          })
         }
-    })
+      })
+
     return () => { ignore = true }
   }, [ticketId, validId, version])
 
@@ -65,11 +66,12 @@ export default function TicketPage() {
   if (data?.ticketId !== ticketId) return null
 
   const { ticket, comments, history } = data
-  const canWriteInternal = user!.role !== 'Employee'
+  const role = user!.role
+  const canWriteInternal = role !== 'Employee'
   const isFinal = ticket.status === 'Closed' || ticket.status === 'Cancelled'
 
   function addComment(comment: Comment) {
-    setData(current => current && { ...current, comments: [...current.comments, comment]})
+    setData(current => current && { ...current, comments: [...current.comments, comment] })
   }
 
   function reload() {
@@ -84,8 +86,20 @@ export default function TicketPage() {
       </div>
 
       <div className="ticket-layout">
-        <div className="stack">
-          <section className="panel">
+        <section className="panel history-panel">
+          <h2>History</h2>
+          <ul className="history">
+            {[...history].reverse().map(h => (
+              <li key={h.id}>
+                <strong>{h.changedByName}</strong> {describeHistory(h)}
+                <time>{formatDate(h.changedAt)}</time>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <div className="main-column">
+          <section className="panel description-panel">
             <h2>Description</h2>
             <p className="pre">{ticket.description}</p>
             {ticket.resolutionNote && (
@@ -96,31 +110,32 @@ export default function TicketPage() {
             )}
           </section>
 
-          <section className="panel">
+          <section className="panel comments-panel">
             <h2>Comments</h2>
-            {comments.length === 0 && <p className="muted">No comments yet.</p>}
             <ul className="comments">
-              {comments.map(c => (
+                {comments.length === 0 && <li className="muted">No comments yet.</li>}
+                {[...comments].reverse().map(c => (
                 <li key={c.id} className={c.isInternal ? 'comment internal' : 'comment'}>
-                  <div className="comment-meta">
+                    <div className="comment-meta">
                     <strong>{c.authorName}</strong> · {formatDate(c.createdAt)}
                     {c.isInternal && <span className="badge internal-badge">Internal</span>}
-                  </div>
-                  <p className="pre">{c.text}</p>
+                    </div>
+                    <p className="pre">{c.text}</p>
                 </li>
-              ))}
+                ))}
             </ul>
             {isFinal ? (
-              <p className="muted">This ticket is {ticket.status.toLowerCase()}. Comments are closed.</p>
+                <p className="muted">This ticket is {ticket.status.toLowerCase()}. Comments are closed.</p>
             ) : (
-              <CommentForm ticketId={ticket.id} canWriteInternal={canWriteInternal} onAdded={addComment} />
+                <CommentForm ticketId={ticket.id} canWriteInternal={canWriteInternal} onAdded={addComment} />
             )}
-          </section>
+            </section>
         </div>
 
         <div className="stack">
-          <TicketActions ticket={ticket} role={user!.role} onChanged={reload} />
-          {user!.role === 'Admin' && canAssign(ticket) && <AssignForm ticket={ticket} onChanged={reload} />}
+          <TicketActions ticket={ticket} role={role} onChanged={reload} />
+          {role === 'Admin' && canAssign(ticket) && <AssignForm ticket={ticket} onChanged={reload} />}
+
           <section className="panel">
             <h2>Details</h2>
             <dl className="details">
@@ -140,18 +155,6 @@ export default function TicketPage() {
               {ticket.closedAt && <Row label="Closed">{formatDate(ticket.closedAt)}</Row>}
               {ticket.reopenCount > 0 && <Row label="Reopened">{ticket.reopenCount}×</Row>}
             </dl>
-          </section>
-
-          <section className="panel">
-            <h2>History</h2>
-            <ul className="history">
-              {history.map(h => (
-                <li key={h.id}>
-                  <strong>{h.changedByName}</strong> {describeHistory(h)}
-                  <time>{formatDate(h.changedAt)}</time>
-                </li>
-              ))}
-            </ul>
           </section>
         </div>
       </div>
