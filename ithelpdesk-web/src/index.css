@@ -227,3 +227,17 @@ textarea { resize: vertical; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
 select.compact { width: auto; padding: 3px 6px; }
 .error-list { color: #b42318; margin: 0 0 12px; padding-left: 18px; }
+
+.stat-cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 16px; }
+.stat-card { display: block; padding: 14px 16px; color: inherit; }
+a.stat-card:hover { text-decoration: none; border-color: #1f5fa8; }
+.stat-value { font-size: 24px; font-weight: 600; }
+.stat-label { color: #666; margin-top: 2px; }
+
+.dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+.bar-list { list-style: none; padding: 0; margin: 0; }
+.bar-list li { display: grid; grid-template-columns: 110px 1fr 40px; align-items: center; gap: 10px; padding: 4px 0; }
+.bar-track { height: 10px; background: #f1f2f4; }
+.bar { display: block; height: 100%; background: #1f5fa8; }
+.bar-value { text-align: right; color: #444; }

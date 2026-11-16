@@ -58,3 +58,21 @@ export type HistoryEntry = {
     changedByName: string
     changedAt: string
 }
+
+export type Stats = {
+  totalTickets: number
+  ticketsByStatus: Record<TicketStatus, number>
+  unassignedTickets: number
+  openTickets: number
+  overdueTickets: number
+  reopenedTickets: number
+  averageResolutionHours: number | null
+  ticketsByCategory: { category: string; count: number }[]
+  technicians: {
+    id: string
+    fullName: string
+    isActive: boolean
+    openTickets: number
+    resolvedTickets: number
+  }[]
+}
