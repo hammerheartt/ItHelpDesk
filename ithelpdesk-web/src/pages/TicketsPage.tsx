@@ -116,26 +116,24 @@ export default function TicketsPage() {
 
       {list?.error && <p className="error">{list.error}</p>}
 
-      {!list ? (
-        <p className="page-message"></p>
-      ) : (
+        {list && (
         <table className={loading ? 'table loading' : 'table'}>
-          <thead>
+        <thead>
             <tr>
-              <th>#</th>
-              <th>Title</th>
-              <th>Status</th>
-              <th>Priority</th>
-              <th>Category</th>
-              {showCreatedBy && <th>Created by</th>}
-              {showAssignedTo && <th>Assigned to</th>}
-              <th>Created</th>
-              <th>Due</th>
+            <th>#</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Category</th>
+            {showCreatedBy && <th>Created by</th>}
+            {showAssignedTo && <th>Assigned to</th>}
+            <th>Created</th>
+            <th>Due</th>
             </tr>
-          </thead>
-          <tbody>
+        </thead>
+        <tbody>
             {list.tickets.map(t => (
-              <tr key={t.id}>
+            <tr key={t.id}>
                 <td>{t.id}</td>
                 <td><Link to={`/tickets/${t.id}`}>{t.title}</Link></td>
                 <td><StatusBadge status={t.status} /></td>
@@ -145,12 +143,12 @@ export default function TicketsPage() {
                 {showAssignedTo && <td>{t.assignedToName ?? '–'}</td>}
                 <td>{formatDate(t.createdAt)}</td>
                 <td className={t.isOverdue ? 'overdue' : ''}>{t.dueAt ? formatDate(t.dueAt) : '–'}</td>
-              </tr>
+            </tr>
             ))}
             {list.tickets.length === 0 && (
-              <tr><td colSpan={9} className="empty">No tickets found.</td></tr>
+            <tr><td colSpan={9} className="empty">No tickets found.</td></tr>
             )}
-          </tbody>
+        </tbody>
         </table>
       )}
 
